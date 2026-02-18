@@ -15,4 +15,4 @@ const currentEnv = typeof(process.env.NODE_ENV) === 'string' ? process.env.NODE_
 
 const environmentToExportt = typeof(environments[currentEnv]) === 'object' ? environments[currentEnv] : environments.staging
 
-module.exports = environments
+module.exports = environmentToExportt

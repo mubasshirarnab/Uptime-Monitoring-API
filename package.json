@@ -2,8 +2,11 @@
   "dependencies": {
     "lodash": "^4.17.23"
   },
-
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "cross-env NODE_ENV=staging nodemon index.js",
+    "production": "cross-env NODE_ENV=production nodemon index.js"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }
