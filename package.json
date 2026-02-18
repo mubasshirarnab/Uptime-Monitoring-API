@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "lodash": "^4.17.23"
+  },
+
+  "scripts": {
+    "start": "nodemon index.js"
   }
 }
