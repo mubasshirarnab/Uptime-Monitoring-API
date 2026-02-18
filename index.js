@@ -7,7 +7,10 @@ const data = require('./lib/data')
 //app object - module scaffolding
 const app = {}
 
-
+//testing file system
+data.update('test', 'newFile',{name : "USA", Language : "English"}, (err) =>{
+    console.log(err)
+})
 
 //create a server
 app.createServer = () => {
