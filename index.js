@@ -1,6 +1,8 @@
 //Dependencies
 const http = require('http')
 const url = require('url')
+const {StringDecoder} = require('string_decoder')
+const { buffer } = require('stream/consumers')
 
 //app object - module scaffolding
 const app = {}
@@ -32,12 +34,22 @@ app.handleReqRes = (req, res) => {
     const header = req.headers
 
 
+    const decoder = new StringDecoder('utf-8')
+    let realData = ''
 
-    console.log(method)
+    req.on('data', (buffer) => {
+        realData += decoder.write(buffer)
+    })
 
+    req.on('end', () =>{
+        realData += decoder.end()
+        console.log(realData)
 
-    //Handling the response
-    res.end("Hello World!!!!")
+        //Handling the response
+        res.end("Hello World!!!!")
+    })
+
+    
 }
 
 //start the server
