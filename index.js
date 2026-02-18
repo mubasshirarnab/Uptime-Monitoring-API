@@ -8,7 +8,7 @@ const data = require('./lib/data')
 const app = {}
 
 //testing file system
-data.update('test', 'newFile',{name : "USA", Language : "English"}, (err) =>{
+data.delete('test', 'newFile',{name : "USA", Language : "English"}, (err) =>{
     console.log(err)
 })
 
