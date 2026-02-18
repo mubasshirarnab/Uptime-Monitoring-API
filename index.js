@@ -8,8 +8,8 @@ const data = require('./lib/data')
 const app = {}
 
 //testing file system
-data.create('test', 'newFile', {name : 'Bangladesh', Language : 'Bangla'}, (err) =>{
-    console.log(`Error was`, err)
+data.read('test', 'newFile', (err, data) =>{
+    console.log(err, data)
 })
 
 //create a server
