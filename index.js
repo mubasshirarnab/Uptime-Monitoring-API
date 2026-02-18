@@ -7,10 +7,6 @@ const data = require('./lib/data')
 //app object - module scaffolding
 const app = {}
 
-//testing file system
-data.delete('test', 'newFile', (err) =>{
-    console.log(err)
-})
 
 //create a server
 app.createServer = () => {
