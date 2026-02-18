@@ -1,5 +1,5 @@
 //Dependencies
-const {sampleHandler} = require('./handlers/sampleHandler')
+const {sampleHandler} = require('./handlers/routeHandlers/sampleHandler')
 
 //Tracking the Routes
 const routes = {

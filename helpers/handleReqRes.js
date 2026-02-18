@@ -2,9 +2,10 @@
 const url = require('url')
 const {StringDecoder} = require('string_decoder')
 const { buffer } = require('stream/consumers')
-const routes = require('./routes')
-const {sampleHandler} = require('./handlers/sampleHandler')
-const {notFoundHandler} = require('./handlers/notFoundHandler')
+const routes = require('../routes')
+const {sampleHandler} = require('../handlers/routeHandlers/sampleHandler')
+const {notFoundHandler} = require('../handlers/routeHandlers/notFoundHandler')
+
 
 //Model scurffolding
 const handler = {}
@@ -40,6 +41,11 @@ handler.hadleReqRes = (req, res) => {
     chosenHandler(requestProperties, (statusCode, payload) => {
         statusCode = typeof(statusCode) === 'number' ? statusCode : 500
         payload = typeof(payload) === 'object' ? payload : {}
+
+        const payloadString = JSON.stringify(payload)
+
+        res.writeHead(statusCode)
+        res.end(payloadString)
     })
 
 
