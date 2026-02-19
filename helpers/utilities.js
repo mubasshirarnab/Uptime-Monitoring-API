@@ -1,7 +1,6 @@
 //Dependencies
 const crypto = require('crypto')
 const environments = require('./environments')
-const environmentToExportt = require('./environments')
 
 //model scarffolding
 const utilities = {}
