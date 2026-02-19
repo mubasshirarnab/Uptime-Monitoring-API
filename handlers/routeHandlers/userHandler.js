@@ -118,6 +118,7 @@ handler._user.put = (requestProperties, callback) => {
 
     //required phone for updating a user
     if(phone){
+        //At least one field is required for updating a user
         if(firstName || lastName || password){
             //Make sure the user is already exists
             data.read('users', phone, (err, user) => {
