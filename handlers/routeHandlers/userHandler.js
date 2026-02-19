@@ -1,6 +1,8 @@
 //Dependencies
 const data = require('../../lib/data')
 const {hash} = require('../../helpers/utilities')
+const {parseJSON} = require('../../helpers/utilities')
+
 
 //Model scarffoldiing
 const handler = {}
@@ -73,15 +75,35 @@ handler._user.post = (requestProperties, callback) => {
 
 }
 
-handler._user.get = () => {
+handler._user.get = (requestProperties, callback) => {
+    const phone = typeof(requestProperties.queryStringObject.phone) === 'string' && requestProperties.queryStringObject.phone.trim().length == 11 ? requestProperties.queryStringObject.phone : false
+
+    if(phone){
+        data.read('users', phone, (err, user) => {
+            if(!err && user){
+                const userObject = parseJSON(user)
+                delete userObject.password
+                callback(200, userObject)
+            }
+            else{
+                callback(404, {
+                    error : 'The user is not found...'
+                })
+            }
+        })
+    }
+    else{
+        callback(404, {
+            error : 'The user is not found...'
+        })
+    }
+}
+
+handler._user.put = (requestProperties, callback) => {
 
 }
 
-handler._user.put = () => {
-
-}
-
-handler._user.delete = () => {
+handler._user.delete = (requestProperties, callback) => {
 
 }
 
