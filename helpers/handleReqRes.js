@@ -54,8 +54,6 @@ handler.hadleReqRes = (req, res) => {
             res.end(payloadString)
         })
 
-        //Handling the response
-        res.end("Hello World!!!!")
     })  
 }
 
