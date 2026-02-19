@@ -8,8 +8,10 @@ const {parseJSON} = require('../../helpers/utilities')
 const handler = {}
 
 handler.userHandler = (requestProperties, callback) => {
+    //Acceptable methods for this handler
     const acceptedMethods = ['get', 'post', 'put', 'delete']
 
+    //Check the method is accepted or not
     if(acceptedMethods.indexOf(requestProperties.method) > -1){
         handler._user[requestProperties.method](requestProperties, callback)
     }
@@ -18,6 +20,7 @@ handler.userHandler = (requestProperties, callback) => {
     }
 }
 
+//Container for all the user methods
 handler._user = {}
 
 handler._user.post = (requestProperties, callback) => {
@@ -38,6 +41,7 @@ handler._user.post = (requestProperties, callback) => {
         //Make sure the user is already not exists
         data.read('users', phone, (err, user) => {
             if(err){
+                //Create the user object
                 let userObject = {
                     firstName,
                     lastName,
@@ -76,11 +80,14 @@ handler._user.post = (requestProperties, callback) => {
 }
 
 handler._user.get = (requestProperties, callback) => {
+    //Sanitizing the user info
     const phone = typeof(requestProperties.queryStringObject.phone) === 'string' && requestProperties.queryStringObject.phone.trim().length == 11 ? requestProperties.queryStringObject.phone : false
 
+    //required phone for getting a user
     if(phone){
         data.read('users', phone, (err, user) => {
             if(!err && user){
+                //Remove the password from the user object before sending the response
                 const userObject = parseJSON(user)
                 delete userObject.password
                 callback(200, userObject)
@@ -112,8 +119,10 @@ handler._user.put = (requestProperties, callback) => {
     //required phone for updating a user
     if(phone){
         if(firstName || lastName || password){
+            //Make sure the user is already exists
             data.read('users', phone, (err, user) => {
                 if(!err && user){
+                    //Update the user data
                     const userObject = parseJSON(user)
                     if(firstName){
                         userObject.firstName = firstName
@@ -160,7 +169,40 @@ handler._user.put = (requestProperties, callback) => {
 }
 
 handler._user.delete = (requestProperties, callback) => {
+    //Sanitizing the user info
+    const phone = typeof(requestProperties.queryStringObject.phone) === 'string' && requestProperties.queryStringObject.phone.trim().length == 11 ? requestProperties.queryStringObject.phone : false
 
+    //required phone for deleting a user
+    if(phone){
+        //Make sure the user is already exists
+        data.read('users', phone, (err, user) => {
+            if(!err && user){
+                //Delete the user from the DB
+                data.delete('users', phone, (err2) => {
+                    if(!err2){
+                        callback(200, {
+                            message : 'The user deleted successfully...'
+                        })
+                    }
+                    else{
+                        callback(500, {
+                            error : 'Could not delete the user...'
+                        })
+                    }
+                })
+            }
+            else{
+                callback(400, {
+                    error : 'The user is not exists...'
+                })
+            }
+        })
+    }
+    else{
+        callback(400, {
+            error : 'Invalid phone number. Please try again...'
+        })
+    }   
 }
 
 
