@@ -5,6 +5,7 @@ const { buffer } = require('stream/consumers')
 const routes = require('../routes')
 const {sampleHandler} = require('../handlers/routeHandlers/sampleHandler')
 const {notFoundHandler} = require('../handlers/routeHandlers/notFoundHandler')
+const {parseJSON} = require('../helpers/utilities')
 
 
 //Model scurffolding
@@ -42,6 +43,8 @@ handler.hadleReqRes = (req, res) => {
 
     req.on('end', () =>{
         realData += decoder.end()
+
+        requestProperties.body = parseJSON(realData)
 
         chosenHandler(requestProperties, (statusCode, payload) => {
             statusCode = typeof(statusCode) === 'number' ? statusCode : 500

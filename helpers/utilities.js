@@ -15,4 +15,4 @@ utilities.parseJSON = (jsonString) => {
 
 
 //Export
-module.exports = environmentToExportt
+module.exports = utilities
