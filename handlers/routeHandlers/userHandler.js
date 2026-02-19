@@ -15,7 +15,7 @@ handler.userHandler = (requestProperties, callback) => {
 handler._user = {}
 
 handler._user.get = (requestProperties, callback) => {
-    callback(200)
+    
 }
 
 handler._user.post = () => {
