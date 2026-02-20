@@ -82,8 +82,10 @@ handler._token.get = (requestProperties, callback) => {
 
     //required tokenId for getting a token      
     if(tokenId){
+        //Look up the token
         data.read('tokens', tokenId, (err, token) => {
             if(!err && token){
+                //Parse the token and send it to the user
                 const tokenObject = parseJSON(token)
                 callback(200, tokenObject)
             }
@@ -94,20 +96,26 @@ handler._token.get = (requestProperties, callback) => {
             }       
         })
     }
-
 }
 
 handler._token.put = (requestProperties, callback) => {
     //Sanitizing the user info
     const tokenId = typeof(requestProperties.body.tokenId) === 'string' && requestProperties.body.tokenId.trim().length == 22 ? requestProperties.body.tokenId : false
     const extend = typeof(requestProperties.body.extend) === 'boolean' && requestProperties.body.extend == true ? true : false  
+
     //required tokenId and extend for updating a token
     if(tokenId && extend){
+        //Look up the token
         data.read('tokens', tokenId, (err, token) => {
             if(!err && token){
+                //Parse the token
                 const tokenObject = parseJSON(token)
+
+                //Check the token is already expired or not
                 if(tokenObject.expires > Date.now()){
+                    //Extend the token for another 1 hour
                     tokenObject.expires = Date.now() + 60 * 60 * 1000 //1 hour
+
                     //Store the updated token to the DB
                     data.update('tokens', tokenId, tokenObject, (err2) => {
                         if(!err2){
@@ -141,8 +149,10 @@ handler._token.delete = (requestProperties, callback) => {
 
     //required tokenId for deleting a token
     if(tokenId){
+        //Look up the token
         data.read('tokens', tokenId, (err, token) => {
             if(!err && token){ 
+                //Delete the token from the DB
                 data.delete('tokens', tokenId, (err2) => {
                     if(!err2){
                         callback(200, {
@@ -168,6 +178,28 @@ handler._token.delete = (requestProperties, callback) => {
             error : 'Invalid tokenId. Please try again...'
         })
     }
+}
+
+//Verify if a given token id is currently valid for a given user
+handler._token.verify = (tokenId, phone, callback) => {
+    //Look up the token
+    data.read('tokens', tokenId, (err, token) => {
+        if(!err && token){
+            //Parse the token
+            const tokenObject = parseJSON(token)   
+
+            //Check the token is for the given user and has not expired
+            if(tokenObject.phone === phone && tokenObject.expires > Date.now()){
+                callback(true)
+            }
+            else{
+                callback(false)
+            }
+        }
+        else{
+            callback(false)
+        }
+    })
 }
 
 
