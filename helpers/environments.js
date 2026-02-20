@@ -6,8 +6,8 @@ environments.staging = {
     envName : 'staging',
     SecretKey : 'dkslciulwie',
     twilio : {
-        sid : 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        authToken : 'your_auth_token',
+        sid: process.env.TWILIO_ACCOUNT_SID,
+        authToken: process.env.TWILIO_AUTH_TOKEN,
         phone : '+15005550006'
     }
 }
@@ -16,9 +16,9 @@ environments.production = {
     port : 5000,
     envName : 'production',
     SecretKey : 'odsviugwsdhiu',
-    twilio : {
-        sid : 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        authToken : 'your_auth_token',
+     twilio : {
+        sid: process.env.TWILIO_ACCOUNT_SID,
+        authToken: process.env.TWILIO_AUTH_TOKEN,
         phone : '+15005550006'
     }
 }

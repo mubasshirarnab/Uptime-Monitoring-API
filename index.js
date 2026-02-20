@@ -2,11 +2,10 @@
 const http = require('http')
 const {hadleReqRes} = require('./helpers/handleReqRes')
 const environments = require('./helpers/environments')
-const data = require('./lib/data')
+require('dotenv').config();
 
 //app object - module scaffolding
 const app = {}
-
 
 //create a server
 app.createServer = () => {
