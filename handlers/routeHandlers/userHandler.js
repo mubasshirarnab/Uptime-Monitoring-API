@@ -202,26 +202,38 @@ handler._user.delete = (requestProperties, callback) => {
 
     //required phone for deleting a user
     if(phone){
-        //Make sure the user is already exists
-        data.read('users', phone, (err, user) => {
-            if(!err && user){
-                //Delete the user from the DB
-                data.delete('users', phone, (err2) => {
-                    if(!err2){
-                        callback(200, {
-                            message : 'The user deleted successfully...'
+        //Verify the token
+        const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false
+
+        verifyToken(tokenId, phone, (tokenIsValid) => {
+            if(tokenIsValid){
+                //Make sure the user is already exists
+                data.read('users', phone, (err, user) => {
+                    if(!err && user){
+                        //Delete the user from the DB
+                        data.delete('users', phone, (err2) => {
+                            if(!err2){
+                                callback(200, {
+                                    message : 'The user deleted successfully...'
+                                })
+                            }
+                            else{
+                                callback(500, {
+                                    error : 'Could not delete the user...'
+                                })
+                            }
                         })
                     }
                     else{
-                        callback(500, {
-                            error : 'Could not delete the user...'
+                        callback(400, {
+                            error : 'The user is not exists...'
                         })
                     }
                 })
             }
             else{
-                callback(400, {
-                    error : 'The user is not exists...'
+                callback(403, {
+                    error : 'Authentication failed...'
                 })
             }
         })
