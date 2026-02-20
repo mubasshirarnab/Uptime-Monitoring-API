@@ -2,7 +2,7 @@
 const data = require('../../lib/data')
 const {hash} = require('../../helpers/utilities')
 const {parseJSON} = require('../../helpers/utilities')
-const {verifyToken} = require('./tokenHandler')
+const tokenHandler = require('./tokenHandler')
 
 
 //Model scarffoldiing
@@ -89,7 +89,7 @@ handler._user.get = (requestProperties, callback) => {
         //Verify the token
         const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false 
 
-        verifyToken(tokenId, phone, (tokenIsValid) => {
+        tokenHandler._token.verify(tokenId, phone, (tokenIsValid) => {
             if(tokenIsValid){
                 //Look up the user
                 data.read('users', phone, (err, user) => {
@@ -136,7 +136,7 @@ handler._user.put = (requestProperties, callback) => {
         //Verify the token
         const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false
 
-        verifyToken(tokenId, phone, (tokenIsValid) => {
+        verifyToken.ver(tokenId, phone, (tokenIsValid) => {
             if(tokenIsValid){
                 //At least one field is required for updating a user
                 if(firstName || lastName || password){
