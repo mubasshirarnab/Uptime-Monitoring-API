@@ -128,6 +128,7 @@ handler._check.post = (requestProperties, callback) => {
     }   
 }
 
+//Get a check - get
 handler._check.get = (requestProperties, callback) => {
     //Sanitizing the user info
     const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length == 22 ? requestProperties.queryStringObject.id : false
@@ -142,7 +143,7 @@ handler._check.get = (requestProperties, callback) => {
 
                 //Get the token from the headers
                 const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false
-                
+
                 //Verify the token and the user is the owner of the token
                 tokenHandler._token.verify(tokenId, checkObject.userPhone, (tokenIsValid) => {
                     if(tokenIsValid){
