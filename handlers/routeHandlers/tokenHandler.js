@@ -27,22 +27,28 @@ handler._token.post = (requestProperties, callback) => {
     //Sanitizing the user info
     const phone = typeof(requestProperties.body.phone) === 'string' && requestProperties.body.phone.trim().length == 11 ? requestProperties.body.phone : false
     const password = typeof(requestProperties.body.password) === 'string' && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password : false
+
     //required phone and password for creating a token
     if(phone && password){
-        //Make sure the user is already exists        data.read('users', phone, (err, user) => {
+        //Make sure the user is already exists        
         data.read('users', phone, (err, user) => {
             if(!err && user){
                 const userObject = parseJSON(user)
+
                 if(hash(password) === userObject.password){
                     //Create a token for the user
-                    const tokenId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+                    const tokenId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) //The token id should be 22 characters long. Math.random().toString(36).substring(2, 15) generates a random string of 13 characters. So we need to generate two random strings and concatenate them to get a token id of 22 characters long
+
+                    //Token expires after 1 hour
                     const expires = Date.now() + 60 * 60 * 1000 //1 hour
 
+                    //Create the token object
                     const tokenObject = {
                         phone,
                         tokenId,
                         expires
-                    }                
+                    }        
+
                     //Store the token to the DB
                     data.create('tokens', tokenId, tokenObject, (err2) => {
                         if(!err2){
