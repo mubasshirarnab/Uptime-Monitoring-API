@@ -205,7 +205,7 @@ handler._user.delete = (requestProperties, callback) => {
         //Verify the token
         const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false
 
-        verifyToken(tokenId, phone, (tokenIsValid) => {
+        tokenHandler._token.verify(tokenId, phone, (tokenIsValid) => {
             if(tokenIsValid){
                 //Make sure the user is already exists
                 data.read('users', phone, (err, user) => {
