@@ -1,5 +1,6 @@
 //Dependencies
 const https = require('https')
+const environments = require('./environments')
 
 //Model scarffolding
 const notifications = {}
@@ -14,7 +15,7 @@ notifications.sendTwilioSMS = (phone, msg, callback) => {
     if(userPhone && message){
         //Configure the request payload
         const payload = {
-            From : process.env.TWILIO_PHONE,
+            From : environments.twilio.phone,
             To : `+88${userPhone}`,
             Body : message
         }
@@ -26,8 +27,8 @@ notifications.sendTwilioSMS = (phone, msg, callback) => {
         const requestDetails = {
             hostname : 'api.twilio.com',
             method : 'POST',
-            path : `/2010-04-01/Accounts/${process.env.TWILIO_SID}/Messages.json`,  
-            auth : `${process.env.TWILIO_SID}:${process.env.TWILIO_AUTH_TOKEN}`,
+            path : `/2010-04-01/Accounts/${environments.twilio.sid}/Messages.json`,  
+            auth : `${environments.twilio.sid}:${environments.twilio.authToken}`,
             headers : {
                 'Content-Type' : 'application/json'
             }
