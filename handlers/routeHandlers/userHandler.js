@@ -87,7 +87,8 @@ handler._user.get = (requestProperties, callback) => {
     //required phone for getting a user
     if(phone){
         //Verify the token
-        const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false  
+        const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false 
+
         verifyToken(tokenId, phone, (tokenIsValid) => {
             if(tokenIsValid){
                 //Look up the user
@@ -132,49 +133,61 @@ handler._user.put = (requestProperties, callback) => {
 
     //required phone for updating a user
     if(phone){
-        //At least one field is required for updating a user
-        if(firstName || lastName || password){
-            //Make sure the user is already exists
-            data.read('users', phone, (err, user) => {
-                if(!err && user){
-                    //Update the user data
-                    const userObject = parseJSON(user)
-                    if(firstName){
-                        userObject.firstName = firstName
-                    }
-                    if(lastName){
-                        userObject.lastName = lastName
-                    }
-                    if(password){
-                        userObject.password = hash(password)
-                    }
+        //Verify the token
+        const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false
 
-                    //Store the updated user to the DB
-                    data.update('users', phone, userObject, (err2) => {
-                        if(!err2){
-                            callback(200, {
-                                message : 'The user updated successfully...'
+        verifyToken(tokenId, phone, (tokenIsValid) => {
+            if(tokenIsValid){
+                //At least one field is required for updating a user
+                if(firstName || lastName || password){
+                    //Make sure the user is already exists
+                    data.read('users', phone, (err, user) => {
+                        if(!err && user){
+                            //Update the user data
+                            const userObject = parseJSON(user)
+                            if(firstName){
+                                userObject.firstName = firstName
+                            }
+                            if(lastName){
+                                userObject.lastName = lastName
+                            }
+                            if(password){
+                                userObject.password = hash(password)
+                            }
+
+                            //Store the updated user to the DB
+                            data.update('users', phone, userObject, (err2) => {
+                                if(!err2){
+                                    callback(200, {
+                                        message : 'The user updated successfully...'
+                                    })
+                                }
+                                else{
+                                    callback(500, {
+                                        error : 'Could not update user...'
+                                    })
+                                }
                             })
                         }
                         else{
-                            callback(500, {
-                                error : 'Could not update user...'
+                            callback(400, {
+                                error : 'The user is not exists...'
                             })
                         }
                     })
                 }
                 else{
                     callback(400, {
-                        error : 'The user is not exists...'
+                        error : 'You have a problem in your request...'
                     })
                 }
-            })
-        }
-        else{
-            callback(400, {
-                error : 'You have a problem in your request...'
-            })
-        }
+            }
+            else{
+                callback(403, {
+                    error : 'Authentication failed...'
+                })
+            }
+        })
     }
     else{
         callback(400, {
