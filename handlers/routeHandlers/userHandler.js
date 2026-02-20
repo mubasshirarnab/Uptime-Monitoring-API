@@ -2,6 +2,7 @@
 const data = require('../../lib/data')
 const {hash} = require('../../helpers/utilities')
 const {parseJSON} = require('../../helpers/utilities')
+const {verifyToken} = require('./tokenHandler')
 
 
 //Model scarffoldiing
@@ -85,16 +86,28 @@ handler._user.get = (requestProperties, callback) => {
 
     //required phone for getting a user
     if(phone){
-        data.read('users', phone, (err, user) => {
-            if(!err && user){
-                //Remove the password from the user object before sending the response
-                const userObject = parseJSON(user)
-                delete userObject.password
-                callback(200, userObject)
+        //Verify the token
+        const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false  
+        verifyToken(tokenId, phone, (tokenIsValid) => {
+            if(tokenIsValid){
+                //Look up the user
+                data.read('users', phone, (err, user) => {
+                    if(!err && user){
+                        //Remove the password from the user object before sending the response
+                        const userObject = parseJSON(user)
+                        delete userObject.password
+                        callback(200, userObject)
+                    }
+                    else{
+                        callback(404, {
+                            error : 'The user is not found...'
+                        })
+                    }
+                })
             }
             else{
-                callback(404, {
-                    error : 'The user is not found...'
+                callback(403, {
+                    error : 'Authentication failed...'
                 })
             }
         })
@@ -105,6 +118,7 @@ handler._user.get = (requestProperties, callback) => {
         })
     }
 }
+
 
 handler._user.put = (requestProperties, callback) => {
     //Sanitizing the user info
