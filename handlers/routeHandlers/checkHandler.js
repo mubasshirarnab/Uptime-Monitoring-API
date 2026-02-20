@@ -168,7 +168,99 @@ handler._check.get = (requestProperties, callback) => {
 
 
 handler._check.put = (requestProperties, callback) => {
-   
+    // Sanitizing the user info
+    const id = typeof(requestProperties.body.id) === 'string' 
+        && requestProperties.body.id.trim().length === 22 
+        ? requestProperties.body.id 
+        : false
+
+    const protocol = typeof(requestProperties.body.protocol) === 'string' 
+        && ['http', 'https'].includes(requestProperties.body.protocol) 
+        ? requestProperties.body.protocol 
+        : false
+
+    const url = typeof(requestProperties.body.url) === 'string' 
+        && requestProperties.body.url.trim().length > 0 
+        ? requestProperties.body.url 
+        : false
+
+    const method = typeof(requestProperties.body.method) === 'string' 
+        && ['GET', 'POST', 'PUT', 'DELETE'].includes(requestProperties.body.method) 
+        ? requestProperties.body.method 
+        : false
+
+    const successCodes = typeof(requestProperties.body.successCodes) === 'object' 
+        && requestProperties.body.successCodes instanceof Array 
+        && requestProperties.body.successCodes.length > 0 
+        ? requestProperties.body.successCodes 
+        : false
+
+    const timeoutSeconds = typeof(requestProperties.body.timeoutSeconds) === 'number'
+        && requestProperties.body.timeoutSeconds % 1 === 0
+        && requestProperties.body.timeoutSeconds >= 1
+        && requestProperties.body.timeoutSeconds <= 5
+        ? requestProperties.body.timeoutSeconds
+        : false
+
+    // Required id for updating a check
+    if (id) {
+        // Look up the check
+        data.read('checks', id, (err, checkData) => {
+            // Check if the check exists
+            if (!err && checkData) {
+                // Parse the check data
+                const checkObject = parseJSON(checkData)
+                // Get the token from the headers
+                const tokenId = typeof(requestProperties.headersObject.token) === 'string'
+                    ? requestProperties.headersObject.token
+                    : false
+
+                // Verify the token and the user is the owner of the token
+                tokenHandler._token.verify(tokenId, checkObject.userPhone, (tokenIsValid) => {
+
+                    if (tokenIsValid) {
+
+                        if (protocol) checkObject.protocol = protocol
+                        if (url) checkObject.url = url
+                        if (method) checkObject.method = method
+                        if (successCodes) checkObject.successCodes = successCodes
+                        if (timeoutSeconds) checkObject.timeoutSeconds = timeoutSeconds
+
+                        // Store the updated check data
+                        data.update('checks', id, checkObject, (err2) => {
+
+                            if (!err2) {
+                                callback(200, checkObject)
+                            } else {
+                                callback(500, {
+                                    error: 'Could not update the check...'
+                                })
+                            }
+
+                        });
+
+                    } else {
+                        callback(403, {
+                            error: 'Authentication failed...'
+                        })
+                    }
+
+                })
+
+            } else {
+                callback(400, {
+                    error: 'Check not found...'
+                })
+            }
+
+        })
+
+    } else {
+        callback(400, {
+            error: 'You have a problem in your request...'
+        })
+    }
+
 }
 
 handler._check.delete = (requestProperties, callback) => {
