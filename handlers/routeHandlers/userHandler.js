@@ -136,7 +136,7 @@ handler._user.put = (requestProperties, callback) => {
         //Verify the token
         const tokenId = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false
 
-        verifyToken.ver(tokenId, phone, (tokenIsValid) => {
+        tokenHandler._token.verify(tokenId, phone, (tokenIsValid) => {
             if(tokenIsValid){
                 //At least one field is required for updating a user
                 if(firstName || lastName || password){
