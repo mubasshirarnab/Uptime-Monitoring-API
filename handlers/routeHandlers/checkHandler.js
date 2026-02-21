@@ -64,8 +64,10 @@ handler._check.post = (requestProperties, callback) => {
                             url,
                             method,
                             successCodes,
-                            timeoutSeconds
-                        }       
+                            timeoutSeconds,
+                            state : 'down',
+                            lastChecked : Date.now()
+                        }
 
                         //Save the object
                         data.create('checks', checkId, checkObject, (err2) => {
