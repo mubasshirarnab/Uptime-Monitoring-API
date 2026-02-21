@@ -1,6 +1,7 @@
 //Dependencies
 require('dotenv').config();
 const server = require('./lib/server')
+const worker = require('./lib/worker')
 
 
 
@@ -11,7 +12,7 @@ app.init = () => {
     //Start the server
 
 
-    //Start the workers
+    //Start the worker
 
 }
 
