@@ -1,23 +1,22 @@
 //Dependencies
-const http = require('http')
-const {hadleReqRes} = require('./helpers/handleReqRes')
-const environments = require('./helpers/environments')
 require('dotenv').config();
+const server = require('./lib/server')
+
+
 
 //app object - module scaffolding
 const app = {}
 
-//create a server
-app.createServer = () => {
-    const server = http.createServer(app.handleReqRes)
-    server.listen(environments.port, () => {
-        console.log(`Listening to port no ${environments.port}`)
-    }) 
-    
+app.init = () => {
+    //Start the server
+
+
+    //Start the workers
+
 }
 
-//handle Request and Response
-app.handleReqRes = hadleReqRes
+//Execute
+app.init()
 
-//start the server
-app.createServer()
+//Export the app module
+module.exports = app
